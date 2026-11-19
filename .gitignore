@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Millennium / starlight generated files (types, sourcemaps, build output)
+.millennium/
+dist/
+*.star
+
+# Test & coverage output
+coverage/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
