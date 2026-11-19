@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - name: Install dependencies (also generates Millennium types via `starlight lsp`)
+        run: bun install --frozen-lockfile
+      - name: Biome (lint + format check)
+        run: bunx biome ci .
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Unit tests
+        run: bun run test
+      - name: Build plugin (.star)
+        run: bun run build:ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: steam-tierlister-star
+          path: dist/steam-tierlister.star
+          if-no-files-found: error
+
+  lua:
+    name: Lua tests (LuaJIT + busted)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leafo/gh-actions-lua@v11
+        with:
+          luaVersion: luajit-2.1
+      - uses: leafo/gh-actions-luarocks@v5
+      - name: Install busted
+        run: luarocks install busted
+      - name: Run Lua tests
+        run: busted --pattern=_spec tests/lua

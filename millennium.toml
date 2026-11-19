@@ -1,0 +1,24 @@
+# Millennium plugin manifest (starlight format). See https://docs.steambrew.app/plugins/structure/config
+[plugin]
+id = "steam-tierlister"
+name = "Steam Tierlister"
+version = "0.0.0"
+author = "Nicholas Laurion"
+description = "TierMaker-style tier lists for your Steam library, in a Tierlists tab."
+
+[backend]
+entry = "backend/main.lua"
+sources = ["backend/**/*.lua"]
+
+[frontend]
+entry = "frontend/index.tsx"
+
+[compiler]
+# "auto" = detect the local Millennium install and write the .star there (dev install; ask first, D-021).
+# CI overrides this with `starlight pack --of dist/steam-tierlister.star`.
+output_path = "auto"
+
+[dev]
+# `bun run dev`: restart the backend and reload Steam's UI when sources change.
+auto_restart = true
+reload_steamui_when = "both"
