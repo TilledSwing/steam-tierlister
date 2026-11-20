@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - name: Install dependencies (also generates Millennium types via `starlight lsp`)
+        run: bun install --frozen-lockfile
+      - name: Biome (lint + format check)
+        run: bunx biome ci .
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Unit tests
+        run: bun run test
+      - name: Build plugin (.star)
+        run: bun run build:ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: steam-tierlister-star
+          path: dist/steam-tierlister.star
+          if-no-files-found: error
+
+  lua:
+    name: Lua tests (LuaJIT + busted)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # LuaRocks can't run under LuaJIT anymore: the luarocks.org manifest exceeds LuaJIT's
+      # 65536-constants-per-function limit. So busted is installed with PUC Lua 5.1 (same C API),
+      # and the specs are executed with LuaJIT (what Millennium uses) via `busted --lua=luajit`.
+      - uses: leafo/gh-actions-lua@v11
+        with:
+          luaVersion: "5.1.5"
+      - uses: leafo/gh-actions-luarocks@v5
+      - name: Install busted
+        run: luarocks install busted
+      - name: Install LuaJIT
+        run: sudo apt-get update && sudo apt-get install -y luajit
+      - name: Run Lua tests on LuaJIT
+        run: |
+          luajit -v
+          busted --lua=luajit --pattern=_spec tests/lua

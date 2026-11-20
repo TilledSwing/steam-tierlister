@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "typeRoots": [
+      "./.millennium/types",
+      "./node_modules/@types"
+    ],
+    "paths": {
+      "millennium": [
+        "./.millennium/lsp/ts"
+      ]
+    }
+  },
+  "include": [
+    "frontend/**/*",
+    "tests/**/*",
+    "vitest.config.ts",
+    ".millennium/**/*.d.ts"
+  ]
+}
