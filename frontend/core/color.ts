@@ -17,8 +17,8 @@
  * @example isValidHexColor('#FF7F7F') // false
  */
 export function isValidHexColor(value: string): boolean {
-	// TODO: return true only for canonical "#rrggbb". Hint: a regular expression anchored with ^ and $.
-	throw new Error(`isValidHexColor is not implemented yet (value: ${value})`);
+	const hexRegex = /^#[0-9a-f]{6}$/;
+	return hexRegex.test(value);
 }
 
 /**
@@ -36,8 +36,14 @@ export function isValidHexColor(value: string): boolean {
  * @example normalizeHexColor('#12345')    // null
  */
 export function normalizeHexColor(input: string): string | null {
-	// TODO: trim, drop an optional leading "#", validate the remaining 3 or 6 hex digits,
-	// expand 3-digit shorthand, lowercase, and return with "#". Return null for anything else.
-	// Tip: the result must satisfy isValidHexColor().
-	throw new Error(`normalizeHexColor is not implemented yet (input: ${input})`);
+	let str = input.trim();
+	str = str.startsWith('#') ? str.slice(1) : str;
+
+	const hexRegex = /^(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+	if (!hexRegex.test(str)) return null;
+
+	if (str.length === 3) str = [...str].map((char) => char + char).join('');
+	str = str.toLowerCase();
+
+	return `#${str}`;
 }
